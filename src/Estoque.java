@@ -1,6 +1,6 @@
 // Sistema de Controle de Estoque e Vendas
-// versao 1.0 - feito rapido pra entregar antes do prazo
-// autor: equipe antiga
+// versao 1.1 - DT-02 Quitada (Validacao de dados)
+// autor: José Victor Onofre Sales
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -19,7 +19,29 @@ public class Estoque {
         int qtd;
     }
 
-    // funcao que adiciona produto
+    // Metodos auxiliares de robustez para tratamento de excecoes
+    static double lerDoubleSeguro(Scanner sc, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return Double.parseDouble(sc.next());
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Digite um valor numerico valido (Use '.' para decimais).");
+            }
+        }
+    }
+
+    static int lerIntSeguro(Scanner sc, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return Integer.parseInt(sc.next());
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Digite um numero inteiro valido.");
+            }
+        }
+    }
+
     static void add(String n, double p, int q) {
         Produto prod = new Produto();
         prod.nome = n;
@@ -36,7 +58,6 @@ public class Estoque {
                 if (produtos.get(i).qtd >= quantidade) {
                     produtos.get(i).qtd = produtos.get(i).qtd - quantidade;
                     double total = produtos.get(i).preco * quantidade;
-                    // desconto pra compras grandes
                     if (total > 100) {
                         total = total - total * 0.1;
                     }
@@ -52,11 +73,10 @@ public class Estoque {
         return 0;
     }
 
-    // calcula o total de uma compra (usado no relatorio)
     static double calcular_total(double preco, int quantidade) {
         double t = preco * quantidade;
-        if (t > 200) {              // limite diferente do usado em vender()
-            t = t - t * 0.15;       // desconto diferente do usado em vender()
+        if (t > 200) {
+            t = t - t * 0.15;
         }
         return t;
     }
@@ -72,23 +92,12 @@ public class Estoque {
     static void relatorio_estoque_baixo() {
         System.out.println("=== ESTOQUE BAIXO ===");
         for (int i = 0; i < produtos.size(); i++) {
-            if (produtos.get(i).qtd < 5) {   // estoque baixo
+            if (produtos.get(i).qtd < 5) {
                 System.out.println(produtos.get(i).nome + " esta com estoque baixo ("
                         + produtos.get(i).qtd + ")");
             }
         }
     }
-
-    // funcao antiga, nao usamos mais
-    // static void exportar() {
-    //     try {
-    //         FileWriter f = new FileWriter("dados.txt");
-    //         for (int i = 0; i < produtos.size(); i++) {
-    //             f.write(produtos.get(i).nome + "\n");
-    //         }
-    //         f.close();
-    //     } catch (Exception e) {}
-    // }
 
     static void relatorio_vendas() {
         // TODO: implementar de verdade
@@ -103,16 +112,13 @@ public class Estoque {
             if (op.equals("1")) {
                 System.out.print("Nome: ");
                 String n = sc.next();
-                System.out.print("Preco: ");
-                double p = Double.parseDouble(sc.next());   // quebra se digitar texto
-                System.out.print("Qtd: ");
-                int q = Integer.parseInt(sc.next());        // quebra se digitar texto
+                double p = lerDoubleSeguro(sc, "Preco: ");
+                int q = lerIntSeguro(sc, "Qtd: ");
                 add(n, p, q);
             } else if (op.equals("2")) {
                 System.out.print("Nome do produto: ");
                 String n = sc.next();
-                System.out.print("Quantidade: ");
-                int q = Integer.parseInt(sc.next());
+                int q = lerIntSeguro(sc, "Quantidade: ");
                 vender(n, q);
             } else if (op.equals("3")) {
                 listar();
