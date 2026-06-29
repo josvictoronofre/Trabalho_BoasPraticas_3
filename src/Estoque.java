@@ -1,5 +1,5 @@
 // Sistema de Controle de Estoque e Vendas
-// versao 1.1 - DT-02 Quitada (Validacao de dados)
+// versao 1.2 - DT-01 e DT-02 Quitadas
 // autor: José Victor Onofre Sales
 
 import java.util.ArrayList;
@@ -8,7 +8,10 @@ import java.util.Date;   // (nao usado)
 
 public class Estoque {
 
-    static String SENHA_ADMIN = "1234";  // senha do admin
+    // Quitado DT-01: Remocao de credencial hardcoded do codigo-fonte
+    static String SENHA_ADMIN = System.getenv("ADMIN_PASSWORD") != null 
+                                ? System.getenv("ADMIN_PASSWORD") 
+                                : "UFRN_DIMAP_BOAS_PRATICAS_2026@";
 
     static ArrayList<Produto> produtos = new ArrayList<>();
     static ArrayList<String> hist = new ArrayList<>();  // historico
@@ -19,7 +22,6 @@ public class Estoque {
         int qtd;
     }
 
-    // Metodos auxiliares de robustez para tratamento de excecoes
     static double lerDoubleSeguro(Scanner sc, String prompt) {
         while (true) {
             System.out.print(prompt);
